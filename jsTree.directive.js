@@ -17,6 +17,14 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
       });
     },
 
+    // Added functionnality for instance: GitHUb #22
+    manageInstance: function (s, e, a) {
+            if (a.treeInstance) {
+                // Using the first way to invoke method on instance
+                s[a.treeInstance] = this.tree.jstree(true);
+            }
+        },
+        
     managePlugins: function(s, e, a, config) {
       if (a.treePlugins) {
         config.plugins = a.treePlugins.split(',');
@@ -141,6 +149,8 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
       treeDir.managePlugins(s, e, a, config);
       this.tree = $(e).jstree(config);
       treeDir.manageEvents(s, e, a);
+      // Github #22
+      treeDir.manageInstance(s, e, a);
     }
   };
 
