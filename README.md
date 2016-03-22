@@ -20,5 +20,5 @@ $ bower i jstree-directive
 ### Basic Example
 
 ```
-<div js-tree="treeConfig" tree-data="scope" tree-model="treeData" tree-instance="treeInstance" tree-plugins="checkbox" tree-events="ready:readyCB"></div>
+<div js-tree="treeConfig" tree-id="treeId" tree-data="scope" tree-model="treeData" tree-instance="treeInstance" tree-plugins="checkbox" tree-events="ready:readyCB"></div>
 ```
