@@ -151,39 +151,44 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
         config.treeData = config.treeData ? config.treeData.toLowerCase() : '';
         config.treeSrc = config.treeSrc ? config.treeSrc.toLowerCase() : '';
 
-        // HTML data
-        if (config.treeData == 'html') {
-          treeDir.fetchResource(config.treeSrc, function(data) {
-            e.html(data);
-            treeDir.init(s, e, a, config);
-          });
-        } else if (config.treeData == 'json') {
-          treeDir.fetchResource(config.treeSrc, function(data) {
-            config.core.data = data;
-            treeDir.init(s, e, a, config);
-          });
-        } else if (config.treeData == 'scope') {
-          s.$watch(config.treeModel, function(n, o) {
-            if (n) {
-              config.core.data = s[config.treeModel];
-              $(e).jstree('destroy');
+        // Specify data directly inside scope
+        if(config.core.data){
+          treeDir.init(s, e, a, config);
+        }else{
+          // HTML data
+          if (config.treeData == 'html') {
+            treeDir.fetchResource(config.treeSrc, function(data) {
+              e.html(data);
               treeDir.init(s, e, a, config);
-            }
-          }, true);
-          // Trigger it initally
-          // Fix issue #13
-          config.core.data = s[config.treeModel];
-          treeDir.init(s, e, a, config);
-        } else if (config.treeAjax) {
-          config.core.data = {
-            'url': config.treeAjax,
-            'data': function(node) {
-              return {
-                'id': node.id != '#' ? node.id : 1
-              };
-            }
-          };
-          treeDir.init(s, e, a, config);
+            });
+          } else if (config.treeData == 'json') {
+            treeDir.fetchResource(config.treeSrc, function(data) {
+              config.core.data = data;
+              treeDir.init(s, e, a, config);
+            });
+          } else if (config.treeData == 'scope') {
+            s.$watch(config.treeModel, function(n, o) {
+              if (n) {
+                config.core.data = s[config.treeModel];
+                $(e).jstree('destroy');
+                treeDir.init(s, e, a, config);
+              }
+            }, true);
+            // Trigger it initally
+            // Fix issue #13
+            config.core.data = s[config.treeModel];
+            treeDir.init(s, e, a, config);
+          } else if (config.treeAjax) {
+            config.core.data = {
+              'url': config.treeAjax,
+              'data': function(node) {
+                return {
+                  'id': node.id != '#' ? node.id : 1
+                };
+              }
+            };
+            treeDir.init(s, e, a, config);
+          }
         }
       });
 
