@@ -32,8 +32,12 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
             }
         },
     managePlugins: function(s, e, a, config) {
-      if (config.treePlugins) {
-        config.plugins = config.treePlugins.split(',');
+      if (config.plugins || config.treePlugins) {
+        // Allow definitions of plugins through array or comma-separated list
+        config.plugins = config.plugins || [];
+        if(config.treePlugins){
+          config.plugins = config.plugins.concat(config.treePlugins.split(','));
+        }
         config.core = config.core || {};
         config.core.check_callback = config.core.check_callback || true;
 
@@ -64,8 +68,10 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
         }
 
         if (config.plugins.indexOf('contextmenu') >= 0) {
+          // Context menu is defined with the contextmenu variable
+          // treeContextMenu is a string referencing a scope variable, can override the former
           if (config.treeContextmenu) {
-            config.contextmenu = config.contextmenu || {};
+            config.contextmenu = {};
 
             if (config.treeContextmenuaction != undefined) {
               config.contextmenu.items = function(e) {
@@ -94,11 +100,16 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
       return config;
     },
     manageEvents: function(s, e, a, config) {
-      if (config.treeEvents) {
-        var evMap = config.treeEvents.split(';');
+      // Allow definitions of events through array or comma-separated list
+      if (config.events || config.treeEvents) {
+        var evMap = config.events || [];
+        if(config.treeEvents){
+          evMap = evMap.concat(config.treeEvents.split(';'));
+        }
+        
         for (var i = 0; i < evMap.length; i++) {
           if (evMap[i].length > 0) {
-	    // plugins could have events with suffixes other than '.jstree'
+	          // plugins could have events with suffixes other than '.jstree'
             var evt = evMap[i].split(':')[0];
             if (evt.indexOf('.') < 0) {
               evt = evt + '.jstree';
@@ -123,7 +134,6 @@ ngJSTree.directive('jsTree', ['$http', function($http) {
         if(!config.core){
           config.core = {};
         }
-        
         // Override with inline statements
         if(Object.keys(a.$attr).length > 0){
           // Only read inline attributes
